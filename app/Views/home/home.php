@@ -8,6 +8,7 @@
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css'><link rel="stylesheet" href="<?php echo base_url('public/assets/css/style.css');  ?>">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.js" integrity="sha512-n/4gHW3atM3QqRcbCn6ewmpxcLAHGaDjpEBu4xZd47N0W2oQ+6q7oc3PXstrJYXcbNU1OHdQ1T7pAP+gi5Yu8g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js" integrity="sha256-/H4YS+7aYb9kJ5OKhFYPUjSJdrtV6AeyJOtTkw6X72o=" crossorigin="anonymous"></script>
     <style>
         .content-body{
             display: -ms-flexbox;
@@ -54,123 +55,109 @@
                         <hr>
                         <form class="form-signin">
                             <div class="form-label-group">
-                                <input type="text" id="custId" class="form-control" placeholder="Customer ID" value="<?php echo $user['kode_cst'] ?>" disabled required>
-                                <label for="custId">Customer ID</label>
+                                <input type="text" id="email" class="form-control" placeholder="email*" required autofocus>
+                                <label for="email">Email <font style="color: red;">*</font></label>
                             </div>
                             <div class="form-label-group">
-                                <input type="text" id="iposId" class="form-control" placeholder="Customer ID" value="<?php echo $user['id_ipos'] ?>" disabled required>
-                                <label for="iposId">IPOS ID</label>
+                                <input type="password" id="password" class="form-control" placeholder="password*"  required autofocus>
+                                <label for="password">Password <font style="color: red;">*</font></label>
                             </div>
-                            <div class="form-label-group">
-                                <input type="text" id="fullName" class="form-control" placeholder="Fullname*" required autofocus>
-                                <label for="fullName">Fullname<font style="color: red;">*</font></label>
-                            </div>
-                            <div class="form-label-group">
-                                <input type="text" id="phone" class="form-control" placeholder="Phone*" onkeypress="numberOnly(event)" required autofocus>
-                                <label for="phone">Phone<font style="color: red;">*</font></label>
-                            </div>
-                            <div class="form-label-group">
-                                <input type="text" id="email" class="form-control" placeholder="Email Address" value="<?php echo $user['email'] ?>" disabled required>
-                                <label for="email">Email Address</label>
-                            </div>
-                            <div class="form-label-group">
-                                <input type="date" id="birthday" class="form-control" placeholder="Birthday*" required autofocus>
-                                <label for="birthday">Birthday<font style="color: red;">*</font></label>
-                            </div>
-                            <div class="form-label-group">
-                                <input type="email" id="iposName" class="form-control" placeholder="IPOS Name" value="<?php echo $user['nama_ipos'] ?>" disabled required>
-                                <label for="iposName">IPOS Name</label>
-                            </div>
-                            <div class="form-label-group">
-                                <input type="email" id="city" class="form-control" placeholder="City" value="<?php echo $user['kota'] ?>" disabled required>
-                                <label for="city">City</label>
-                            </div>
-                            <hr>
-                            <div class="form-label-group">
-                                <input type="password" id="password" class="form-control" placeholder="Password*" required>
-                                <label for="password">Password<font style="color: red;">*</font></label>
-                            </div>
-                            <p id='message' style="margin-bottom: 5px; margin-left: 10px;"></p>
-                            <div class="form-label-group">
-                                
-                                <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm Password*" onkeyup="check();" required>
-                                <label for="confirmPassword">Confirm Password<font style="color: red;">*</font></label>
-                            </div>
-                            
                             <p id="errorMessage" style="color: red;"></p>
-                            
 
-                            <!-- <button class="btn btn-lg btn-primary btn-block text-uppercase" onclick="submitForm()">Submit</button> -->
-                            <a id="btnSubmit" class="btn btn-lg btn-primary btn-block text-uppercase disabled text-white" onclick="submitForm()"><i class="fa fa-spinner fa-spin" id="spinner_id" style="display: none;"></i><i class="fa fa-check" id="check_id" style="display: none;"></i> Submit</a>
+                            <a id="btnSubmit" class="btn btn-lg btn-primary btn-block text-uppercase text-white" onclick="submitForm()"><i class="fa fa-spinner fa-spin" id="spinner_id" style="display: none;"></i><i class="fa fa-check" id="check_id" style="display: none;"></i> Login</a>
+                            <br>
+                            <a id="btnMoveEn" class="btn btn-lg btn-success btn-block text-uppercase text-white" onclick="moveToEncrypt()">Encrypt / Decrypt</a>
                         </form>
                         <div class="content-footer text-center">
-                            <!-- <hr> -->
-                            <label for="footer">Copyright © 2021 PT. IS Ing Silver.</label>
+                            
+                            <label for="footer">Developed by Kevin.</label>
                         </div>
                     </div>
                     <div id="formSuccess" class="card-body" style="display: none;">
                         <div class="content-body">
-                            <h5 class="card-title text-center">Success</h5>
+                            <h5 class="card-title text-center">Login Success</h5>
                         </div>
                         <div class="content-footer2 text-center">
                             <!-- <hr> -->
                             <label for="footer">Copyright © 2021 PT. IS Ing Silver.</label>
                         </div>
                     </div>
+                    <div id="formEncrypt" class="card-body" style="display: none;">
+                        <h5 class="card-title text-center">Encrypt / Decrypt Form</h5>
+                        <hr>
+                        <form class="form-signin">
+                            <div class="form-label-group">
+                                <input type="text" id="input" class="form-control" placeholder="input*" required autofocus>
+                                <label for="input">Input <font style="color: red;">*</font></label>
+                            </div>
+                            <div class="form-label-group">
+                                <input type="text" id="result" class="form-control" placeholder="result*"  required autofocus>
+                                <label for="result">Result <font style="color: red;">*</font></label>
+                            </div>
+                            
+                            <p id="errorMessage" style="color: red;"></p>
+                            <br>
+                            <a id="btnEn" class="btn btn-lg btn-primary btn-block text-uppercase text-white" onclick="encryptInput()">Encrypt</a>
+                            <br>
+                            <a id="btnDec" class="btn btn-lg btn-success btn-block text-uppercase text-white" onclick="decryptInput()">Decrypt</a>
+                            <br>
+                            <a id="btnClear" class="btn btn-lg btn-danger btn-block text-uppercase text-white" onclick="clearInput()">Clear</a>
+                            <br>
+                            <a id="btnBack" class="btn btn-lg btn-warning btn-block text-uppercase text-white" onclick="moveToDefault()">< Back</a>                            
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    
     <script>
-        function numberOnly(evt) {
-        var theEvent = evt || window.event;
+        let secretPass = "W8GGhyhYes44Uys";
 
-        // Handle paste
-        if (theEvent.type === 'paste') {
-            key = event.clipboardData.getData('text/plain');
-        } else {
-        // Handle key press
-            var key = theEvent.keyCode || theEvent.which;
-            key = String.fromCharCode(key);
+        function encryptInput(){
+            var input = document.getElementById('input').value;
+            
+            console.log(input);
+            var encryptedAES = CryptoJS.AES.encrypt(input, secretPass);
+            document.getElementById('result').value = encryptedAES;
         }
-        var regex = /[0-9]|\./;
-        if( !regex.test(key) ) {
-            theEvent.returnValue = false;
-            if(theEvent.preventDefault) theEvent.preventDefault();
+        function decryptInput(){
+            var input = document.getElementById('input').value;
+            
+            var decryptedBytes = CryptoJS.AES.decrypt(input, secretPass);
+            console.log(decryptedBytes);
+            var plainText = decryptedBytes.toString(CryptoJS.enc.Utf8);
+            console.log(plainText);
+            document.getElementById('result').value = plainText;
         }
-        }    
-        var check = function() {
-        if (document.getElementById('password').value ==
-            document.getElementById('confirmPassword').value) {
-            document.getElementById('confirmPassword').style.color = '#4C84FF';
-            document.getElementById('message').style.color = '#4C84FF';
-            document.getElementById('message').innerHTML = 'Password match.';
-            $('#btnSubmit').removeClass('disabled');
-        } else {
-            document.getElementById('confirmPassword').style.color = 'red';
-            document.getElementById('message').style.color = 'red';
-            document.getElementById('message').innerHTML = 'Password do not match!';
-            $('#btnSubmit').addClass('disabled');
-            }
+        function clearInput(){
+            document.getElementById('input').value = "";
+            document.getElementById('result').value = "";
+        }
+        function moveToDefault(){
+            $("#formEncrypt").slideUp('slow');
+            $("#formId").slideDown('slow');
+        }
+        function moveToEncrypt(){
+            $("#formEncrypt").slideDown('slow');
+            $("#formId").slideUp('slow');
         }
         function submitForm(){
             
-            var custId = document.getElementById('custId').value;
-            var fullName = document.getElementById('fullName').value;
-            var phone = document.getElementById('phone').value;
-            var birthday = document.getElementById('birthday').value;
+            var email = document.getElementById('email').value;
             var password = document.getElementById('password').value;
+            
             
             $("#spinner_id").show('slow');
             $.ajax({
-                url : "<?php echo base_url('home/submitForm')?>",
+                url : "http://laurenscodes.space:5001/api/online_att/auth",
                 type: 'POST',
-                data: {custId:custId, fullName:fullName, phone:phone, birthday:birthday, password:password},
+                data: {email:email, password:password},
                 success : function(data){
-                    var obj = jQuery.parseJSON(data);
-                    console.log(obj);
-                    if(obj.error == false){
-                        console.log(obj.status);   
+
+                    
+                    var obj = data
+                    if(obj.success == true){  
                         setTimeout(() => {
                             $("#spinner_id").css("display", "none");
                             $("#check_id").css("display", "");
@@ -183,14 +170,13 @@
                             $("#formSuccess").slideDown('slow');
                         }, 2000);         
                     } else {
-                        console.log(obj.status);
                         setTimeout(() => {
                             $("#spinner_id").css("display", "none");
                             $("#check_id").css("display", "");
                             $("#errorMessage").slideDown('slow');
                             $("#check_id").addClass("fa-times");
                             $("#check_id").removeClass("fa-check");
-                            document.getElementById('errorMessage').innerHTML = obj.errorMessage;
+                            document.getElementById('errorMessage').innerHTML = obj.message;
                             setTimeout(() => {
                                 $("#check_id").hide('slow');
                             }, 2000);
